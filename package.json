@@ -1,0 +1,25 @@
+{
+  "name": "todo_fun",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "server": "nodemon app.js"
+  },
+  "author": "SurSergey",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^6.2.0",
+    "nodemon": "^2.0.12"
+  },
+  "dependencies": {
+    "@types/express": "^4.17.13",
+    "bcryptjs": "^2.4.3",
+    "config": "^3.3.6",
+    "express": "^4.17.1",
+    "express-validator": "^6.12.1",
+    "jsonwebtoken": "^8.5.1",
+    "pg": "^8.7.1"
+  }
+}
