@@ -11,6 +11,17 @@ app.use('/api/auth', require('./routes/auth.routes'))
 
 const PORT = config.get("PORT") || 5000
 
-app.listen(PORT , () => {
-    console.log(`App has been successfully started on port ${PORT}...`)
-})
+
+const start = async () => {
+    try {
+
+
+
+        app.listen(PORT, () => {console.log(`App has been successfully started on port ${PORT}...`)})
+
+    } catch (e) {
+        console.log(e)
+    }
+}
+
+start()
