@@ -30,7 +30,9 @@ class TasksController {
     }
 
     async getAllTasks () {
-        return await db.query('SELECT * FROM tasks').rows
+        const data = await db.query('SELECT * FROM tasks')
+        console.log(JSON.stringify(data.rows))
+        return data.rows
     }
 
 }

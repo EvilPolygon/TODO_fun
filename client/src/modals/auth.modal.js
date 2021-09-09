@@ -7,7 +7,7 @@ import './modal.css'
 export const Modal = ({ active, setActive, signUp }) => {
     const auth = useContext(AuthContext)
     const message = useMessage()
-    const {loading, error, request, clearError} = useHttp()
+    const { error, request, clearError} = useHttp()
 
     const [form, stateForm] = useState({
         name: '',

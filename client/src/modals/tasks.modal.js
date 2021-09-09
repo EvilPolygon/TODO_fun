@@ -29,7 +29,7 @@ export const TasksModal = ({ active, setActive, purpose }) => {
 
     const auth = useContext(AuthContext)
     const message = useMessage()
-    const { loading, error, request, clearError } = useHttp()
+    const { error, request, clearError } = useHttp()
 
     useEffect(() => {
         message(error)

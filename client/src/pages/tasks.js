@@ -1,52 +1,49 @@
-import TasksTable from '../components/TasksTable'
+import {TasksTable} from '../components/TasksTable'
 import M from 'materialize-css'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
+import { useHttp } from '../hooks/http.hook'
 
 export const TasksPage = () => {
 
+    const { loading, request} = useHttp()
+
     const [updated, setUpdated] = useState(false)
+    const [dataRows, setDatarows] = useState(null)   
+
+    const getUpdatedBase = useCallback(async () => {
+        try {
+            const rawData = await request('/api/tasks/getData', 'GET', null)
+            const fetchedData = rawData['rawData']
+            let currentData = []
+
+            for (let i in fetchedData) {
+                currentData[fetchedData[i].t_id - 1 ] = fetchedData[i]
+            }
+            setDatarows(currentData)
+        } catch (e) {
+        }
+    },[request])
+
+    useEffect(() => {
+        if (updated) {
+            getUpdatedBase() 
+            setUpdated(false)
+        }
+    }, [getUpdatedBase, updated])
 
 
-    const getUpdatedBase = async () => {
-
-    }
+    console.log(JSON.stringify(dataRows))                 //magic console log wtf
 
 
     useEffect(() => {
-        window.M.AutoInit()
+        M.AutoInit();
     }, [])
 
     return (
         <div className="divTable">
-        <p>adzxcasd</p>
-        <button className="btn red darken-4" onClick={getUpdatedBase}>UPDATE</button>
-            <table className="highlight responsive-table ">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Item Name</th>
-                        <th>Item Price</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                    <tr>
-                        <td>Alvin</td>
-                        <td>Eclair</td>
-                        <td>$0.87</td>
-                    </tr>
-                    <tr>
-                        <td>Alan</td>
-                        <td>Jellybean</td>
-                        <td>$3.76</td>
-                    </tr>
-                    <tr>
-                        <td>Jonathan</td>
-                        <td>Lollipop</td>
-                        <td>$7.00</td>
-                    </tr>
-                </tbody>
-            </table>
+            <button className="btn red darken-4" onClick={() => { }}>UPDATE</button>
+            <button className="btn red darken-4" onClick={() => setUpdated(true)}>SET UN UPDATE</button>
+            { !loading && dataRows && <TasksTable data = {dataRows}/> }
         </div>
     )
 }
