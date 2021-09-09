@@ -16,10 +16,10 @@ export const useRoutes = isAuth => {
 
     return (
         <Switch>
-            <Route path='/auth' exact>
+            <Route path='/' exact>
                 <AuthPage />
             </Route>
-            <Redirect to = '/auth' />
+            <Redirect to = '/' />
         </Switch>
     )
 }

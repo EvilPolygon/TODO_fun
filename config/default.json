@@ -1,5 +1,6 @@
 {
     "PORT": 4000,
+    "jwtsecret": "secretword",
     "DB_NAME": "todo_test",
     "DB_USER": "postgres",
     "DB_PASSWORD": "17934862",

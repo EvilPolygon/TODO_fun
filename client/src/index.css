@@ -1,1 +1,16 @@
 @import "~materialize-css/dist/css/materialize.min.css";
+
+#roota{
+    height: 100vh;
+    width: 100vw;
+}
+
+.divTablea{
+    height: 100vh;
+    width: 100vw;
+}
+
+.containera{
+    height: 100vh;
+    width: 100vw;
+}

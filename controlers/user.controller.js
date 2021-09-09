@@ -2,11 +2,18 @@ const db = require('../db')
 
 class UserController {
 
-    async createUser(req, res) {
-        /* const {name, lastname} = req.body
-        const newUser = await db.query(`INSERT INTO users (name, lastname) values ($1, $2) returning *`, [name, lastname])
+    async createUser(reqBody) {
+        const {name, lastname, patronymic, login, password, supervisor} = reqBody        
+        await db.query(`INSERT INTO users (name, lastname, patronymic, login, password, supervisor) values ($1, $2, $3, $4, $5, $6)`, [name, lastname, patronymic, login, password, supervisor]) 
 
-        res.json(newUser.rows) */
+    }
+
+    async findOneUser(login) {
+        const found = await db.query('SELECT * FROM users where login = $1', [login])
+
+        return found.rows
     }
 
 }
+
+module.exports = new UserController()
