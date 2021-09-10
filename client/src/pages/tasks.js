@@ -5,10 +5,11 @@ import { useHttp } from '../hooks/http.hook'
 
 export const TasksPage = () => {
 
-    const { loading, request} = useHttp()
+    const {loading, request} = useHttp()
 
-    const [updated, setUpdated] = useState(false)
+    const [updated, setUpdated] = useState(true)
     const [dataRows, setDatarows] = useState(null)   
+    
 
     const getUpdatedBase = useCallback(async () => {
         try {
@@ -31,19 +32,13 @@ export const TasksPage = () => {
         }
     }, [getUpdatedBase, updated])
 
-
-    console.log(JSON.stringify(dataRows))                 //magic console log wtf
-
-
     useEffect(() => {
         M.AutoInit();
     }, [])
 
     return (
-        <div className="divTable">
-            <button className="btn red darken-4" onClick={() => { }}>UPDATE</button>
-            <button className="btn red darken-4" onClick={() => setUpdated(true)}>SET UN UPDATE</button>
-            { !loading && dataRows && <TasksTable data = {dataRows}/> }
+        <div className="divTable">            
+            { !loading && dataRows && <TasksTable data = {dataRows}/> }                    
         </div>
     )
 }

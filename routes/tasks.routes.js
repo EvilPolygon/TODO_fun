@@ -20,9 +20,9 @@ router.post('/create',
                     message: 'Некорректные данные при отправлении задачи'
                 })
             }
-            const { header, description, end_time, priority, resposible } = req.body
+            const { header, description, end_time, priority, resposible, u_id } = req.body
 
-            await tasksController.createTask({ header, description, end_time, priority, resposible: 'somebody', u_id: 13, })
+            await tasksController.createTask({ header, description, end_time, priority, resposible, u_id })
 
             res.json({ message: JSON.stringify(req.body) })
 

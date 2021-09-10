@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from 'react'
+import React, { useEffect, useState, useContext, useReducer } from 'react'
 import { useHttp } from '../hooks/http.hook'
 import { AuthContext } from '../context/auth.context'
 import { useMessage } from '../hooks/message.hook'
@@ -7,12 +7,21 @@ import './modal.css'
 
 export const TasksModal = ({ active, setActive, purpose }) => {
 
+    useEffect(() => {
+        M.AutoInit();
+    }, [])
+
+    const auth = useContext(AuthContext)
+    const message = useMessage()
+    const { error, request, clearError } = useHttp()
+
     const [form, stateForm] = useState({
         header: '',
         description: '',
         priority: '',
         responsible: '',
-        end_time: ''
+        end_time: '',
+        u_id: auth.u_id
     })
 
     const resetForm = () => {
@@ -22,41 +31,51 @@ export const TasksModal = ({ active, setActive, purpose }) => {
             description: '',
             priority: '',
             responsible: '',
-            end_time: ''
+            end_time: '',
+            u_id: auth.userId
         })
-        console.log(JSON.stringify(form))
     }
 
-    const auth = useContext(AuthContext)
-    const message = useMessage()
-    const { error, request, clearError } = useHttp()
+    const [time, getFormTime] = useState('')
+    const [date, getFormDate] = useReducer(,'') //разберись как это работает
 
     useEffect(() => {
         message(error)
         clearError()
     }, [error, message, clearError])
 
-    useEffect(() => {
-        M.AutoInit();
-    }, [])
-
     const changeHandler = event => {
         stateForm({ ...form, [event.target.name]: event.target.value })
     }
 
-    const getDate = () => {
-
+    const getTime = event => {
+        getFormTime(event.target.value, () => {
+            console.log(time)
+        })
+        setDateTime()
     }
 
-    const getTime = () => {
-
+    const getDate = event => {
+        getFormDate(event.target.value)
+        setDateTime()
     }
+
+    const setDateTime = () => {
+        if (time && date) {
+            console.log(date, time)
+            stateForm({ ...form, end_time: `${date}T${time}:00.000+5:00` })
+        }
+    }
+
+
 
     const createTask = async () => {
         try {
+
             console.log(JSON.stringify(form))
-            const data = await request('/api/tasks/create', 'POST', { ...form })
-            message(data.message)
+            //await request('/api/tasks/create', 'POST', { ...form })
+
+            resetForm()
         } catch (e) {
 
         }
@@ -88,7 +107,7 @@ export const TasksModal = ({ active, setActive, purpose }) => {
                             type="select"
                             name="priority"
                             onChange={changeHandler}>
-                            <option value="" disabled selected>Выберите приоритет задачи</option>
+                            <option value="Низкий" defaultValue>Выберите приоритет задачи</option>
                             <option value="Низкий">Низкий</option>
                             <option value="Средний">Средний</option>
                             <option value="Высокий">Высокий</option>
@@ -105,30 +124,52 @@ export const TasksModal = ({ active, setActive, purpose }) => {
                     <div>
                         <label htmlFor="end_time">Время окончание задачи</label>
                         <input placeholder="Введите Дату"
-                            type="text"
-                            className="datepicker"
-                            value={getDate}
+                            type="date"
+                            className="datepickera"
+                            name="date"
+                            onChange={getDate}
+                            value={date}
                         />
                         <input placeholder="Введите Время"
-                            type="text"
-                            className="timepicker"
-                            value={getTime}
+                            type="time"
+                            name="time"
+                            className="timepickera"
+                            onChange={getTime}
+                            value={time}
                         />
                     </div>
                 </div>
 
                 <div className="card-action" style={{ marginTop: 20 }}>
-                    <button
-                        className="btn cyan darken-4"
-                        style={{ marginRight: 10 }}
-                        onClick={createTask}
-                    > Создать
-                    </button>
+                    {purpose ?
+                        <button
+                            className="btn cyan darken-4"
+                            style={{ marginRight: 10 }}
+                            onClick={createTask}
+                        > Создать
+                        </button>
+                        :
+                        <button
+                            className="btn blue darken-4"
+                            style={{ marginRight: 10 }}
+                            onClick={createTask}
+                        > Изменить
+                        </button>
+                    }
                     <button
                         className="btn grey lighten-1 black-text"
+                        style={{ marginRight: 10 }}
                         onClick={resetForm}
                     > Закрыть
                     </button>
+                    {!purpose ?
+                        <button
+                            className="btn red lighten-1 black-text right"
+                            onClick={() => { }}
+                        > Удалить
+                        </button>
+                        :
+                        null}
                 </div>
 
             </div>
