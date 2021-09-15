@@ -6,6 +6,10 @@ import { AuthContext } from '../context/auth.context'
 
 export const TasksTable = ({ data }) => {
 
+    /*
+        здесь только формирование таблицы и ее отображение
+    */
+
     const auth = useContext(AuthContext)
 
     const [modalActive, setModalActive] = useState(false)
@@ -38,6 +42,17 @@ export const TasksTable = ({ data }) => {
         setModalActive(true)
     }
 
+    const setClassName = (info) => {
+        if(info.status === 1){
+            return 'teal lighten-4'
+        }
+        else{
+            if((info.end_time - Date.now()) < 0){
+                return 'red lighten-4'
+            }
+        }
+    }
+
     const isDataEmpty = data.length === 0
 
     const tHead = (
@@ -64,6 +79,7 @@ export const TasksTable = ({ data }) => {
                     <tr key={data[i].t_id}
                         data-key={data[i].t_id}
                         onClick={() => clickHandler(data[i])}
+                        className={setClassName(data[i])}
                     >
                         <th>{data[i].header}</th>
                         <th>{`${time.getHours()}:${time.getMinutes()} ${time.getDate()}-${time.getMonth()}-${time.getFullYear()}`}</th>

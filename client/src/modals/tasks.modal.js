@@ -7,6 +7,14 @@ import './modal.css'
 
 export const TasksModal = ({ active, setActive, form, stateForm }) => {
 
+    /*
+        назначение этого модальника изменяется исходя их входящих даных. если поле заголовка изначально пустое - значит мы создаем задачу
+        иначе изменяем задачу
+
+        JSX ведет себя так же в зависимости от входящих данных за это отвечает стэйт purpose
+        checked нужен что бы проверка входящих данных происходила только один раз иначе ловим баг
+    */
+
     useEffect(() => {
         M.AutoInit();
     }, [])
@@ -14,17 +22,6 @@ export const TasksModal = ({ active, setActive, form, stateForm }) => {
     const auth = useContext(AuthContext)
     const message = useMessage()
     const { error, request, clearError } = useHttp()
-
-    /*const [form, stateForm] = useState(
-        {
-            header: '',
-            description: '',
-            priority: '',
-            responsible: '',
-            end_time: '',
-            u_id: auth.u_id
-        }
-    )*/
 
     const [checked, setChecked] = useState(false)
     const [purpose, setPurpose] = useState(false)
@@ -60,34 +57,6 @@ export const TasksModal = ({ active, setActive, form, stateForm }) => {
         setDateTime()
     }
 
-    /*if (purpose != null) {
-        stateForm(() => {
-            return {
-                header: purpose.header,
-                description: purpose.description,
-                priority: purpose.priority,
-                responsible: purpose.responsible,
-                end_time: '',
-                u_id: purpose.u_id
-            }
-        }
-        )
-    }
-    else {
-        stateForm(() => {
-            return {
-                header: '',
-                description: '',
-                priority: '',
-                responsible: '',
-                end_time: '',
-                u_id: auth.userId
-            }
-        }
-        )
-    }*/
-
-
     const getDate = event => {
         getFormDate(event.target.value)
         setDateTime()
@@ -118,7 +87,7 @@ export const TasksModal = ({ active, setActive, form, stateForm }) => {
 
         }
     }
-    console.log('is supervisor ', auth.supervisor, JSON.stringify(form))
+    console.log('is supervisor ', auth.supervisor, form.isSupervisor, JSON.stringify(form))
 
     const deleteTask = async () => {
         try {
