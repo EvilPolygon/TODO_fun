@@ -8,6 +8,18 @@ export const NavBar = () => {
 
     const [modalActive, setModalActive] = useState(false)
 
+    const [form, stateForm] = useState(
+        {
+            header: '',
+            description: '',
+            priority: '',
+            responsible: '',
+            end_time: '',
+            u_id: auth.u_id,
+            isSupervisor: auth.supervisor
+        }
+    )
+
     const logoutHandler = event => {
         auth.logout()
     }
@@ -24,7 +36,7 @@ export const NavBar = () => {
                 </div>
             </nav>
 
-            <TasksModal active={modalActive} setActive={setModalActive} purpose={true} />
+            <TasksModal active={modalActive} setActive={setModalActive} form={form} stateForm={stateForm}/>
         </div>
     )
 }

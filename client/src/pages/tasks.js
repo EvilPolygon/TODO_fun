@@ -1,13 +1,14 @@
 import {TasksTable} from '../components/TasksTable'
 import M from 'materialize-css'
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useContext } from 'react'
 import { useHttp } from '../hooks/http.hook'
+import { AuthContext } from '../context/auth.context'
 
 export const TasksPage = () => {
 
     const {loading, request} = useHttp()
-
-    const [updated, setUpdated] = useState(true)
+    const auth = useContext(AuthContext)
+    
     const [dataRows, setDatarows] = useState(null)   
     
 
@@ -26,11 +27,11 @@ export const TasksPage = () => {
     },[request])
 
     useEffect(() => {
-        if (updated) {
+        if (auth.updated) {
             getUpdatedBase() 
-            setUpdated(false)
+            auth.setUpdated(false)
         }
-    }, [getUpdatedBase, updated])
+    }, [getUpdatedBase, auth.updated])
 
     useEffect(() => {
         M.AutoInit();

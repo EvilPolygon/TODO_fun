@@ -4,14 +4,17 @@ import { NavBar } from './components/NavBar'
 import { useAuth } from './hooks/auth.hook'
 import { AuthContext } from './context/auth.context'
 import {Loader} from './components/Loader'
+import {useState} from 'react'
 
 import 'materialize-css'
 
 function App() {
 
-  const { token, login, logout, userId, ready } = useAuth()
+  const { token, login, logout, userId, ready, supervisor } = useAuth()
   const isAuthenticated = !!token
   const routes = useRoutes(isAuthenticated)
+
+  const [updated, setUpdated] = useState(true)
 
   if (!ready) {
     return <Loader />
@@ -19,7 +22,7 @@ function App() {
 
   return (
     <AuthContext.Provider value={{
-      token, login, logout, userId, isAuthenticated,
+      token, login, logout, userId, isAuthenticated, supervisor, updated, setUpdated
     }}>
       <Router>
         {isAuthenticated && <NavBar />}

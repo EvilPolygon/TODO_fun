@@ -3,7 +3,7 @@ const router = Router()
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const config = require('config')
-const UserController = require('../controlers/user.controller')
+const userController = require('../controlers/user.controller')
 const { check, validationResult} = require('express-validator')
 
 
@@ -62,7 +62,7 @@ router.post(
             }
             else{
                 const hashedPassword = await bcrypt.hash(password, 12)
-                await UserController.createUser({name, lastname, patronymic, login, password: hashedPassword, supervisor})
+                await userController.createUser({name, lastname, patronymic, login, password: hashedPassword, supervisor})
                 res.status(201).json({message: 'Пользователь создан'})
             }              
             
@@ -110,7 +110,7 @@ router.post(
                     {expiresIn: '6h'}
                 )
                 console.log(JSON.stringify(findUser))
-                res.json({token, userId: findUser[0].u_id})
+                res.json({token, userId: findUser[0].u_id, isEmp: findUser[0].supervisor})
 
             }
             else{

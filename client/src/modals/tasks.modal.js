@@ -1,11 +1,11 @@
-import React, { useEffect, useState, useContext, useReducer } from 'react'
+import React, { useEffect, useState, useContext, useCallback } from 'react'
 import { useHttp } from '../hooks/http.hook'
 import { AuthContext } from '../context/auth.context'
 import { useMessage } from '../hooks/message.hook'
 import M from 'materialize-css'
 import './modal.css'
 
-export const TasksModal = ({ active, setActive, purpose }) => {
+export const TasksModal = ({ active, setActive, form, stateForm }) => {
 
     useEffect(() => {
         M.AutoInit();
@@ -15,29 +15,36 @@ export const TasksModal = ({ active, setActive, purpose }) => {
     const message = useMessage()
     const { error, request, clearError } = useHttp()
 
-    const [form, stateForm] = useState({
-        header: '',
-        description: '',
-        priority: '',
-        responsible: '',
-        end_time: '',
-        u_id: auth.u_id
-    })
+    /*const [form, stateForm] = useState(
+        {
+            header: '',
+            description: '',
+            priority: '',
+            responsible: '',
+            end_time: '',
+            u_id: auth.u_id
+        }
+    )*/
+
+    const [checked, setChecked] = useState(false)
+    const [purpose, setPurpose] = useState(false)
 
     const resetForm = () => {
-        setActive(false)
         stateForm({
             header: '',
             description: '',
             priority: '',
             responsible: '',
             end_time: '',
-            u_id: auth.userId
+            u_id: auth.userId,
+            isSupervisor: auth.supervisor
         })
+        setChecked(false)
+        setActive(false)
     }
 
     const [time, getFormTime] = useState('')
-    const [date, getFormDate] = useReducer(,'') //разберись как это работает
+    const [date, getFormDate] = useState('')
 
     useEffect(() => {
         message(error)
@@ -49,38 +56,113 @@ export const TasksModal = ({ active, setActive, purpose }) => {
     }
 
     const getTime = event => {
-        getFormTime(event.target.value, () => {
-            console.log(time)
-        })
+        getFormTime(event.target.value)
         setDateTime()
     }
+
+    /*if (purpose != null) {
+        stateForm(() => {
+            return {
+                header: purpose.header,
+                description: purpose.description,
+                priority: purpose.priority,
+                responsible: purpose.responsible,
+                end_time: '',
+                u_id: purpose.u_id
+            }
+        }
+        )
+    }
+    else {
+        stateForm(() => {
+            return {
+                header: '',
+                description: '',
+                priority: '',
+                responsible: '',
+                end_time: '',
+                u_id: auth.userId
+            }
+        }
+        )
+    }*/
+
 
     const getDate = event => {
         getFormDate(event.target.value)
         setDateTime()
     }
 
-    const setDateTime = () => {
+
+    const setDateTime = useCallback(() => {
         if (time && date) {
             console.log(date, time)
-            stateForm({ ...form, end_time: `${date}T${time}:00.000+5:00` })
+            let dateStr = `${date}T${time}:00.000+05:00`
+            stateForm({ ...form, end_time: Date.parse(dateStr) })
         }
-    }
+    }, [time])
 
 
 
     const createTask = async () => {
         try {
-
+            console.log(form.end_time)
             console.log(JSON.stringify(form))
-            //await request('/api/tasks/create', 'POST', { ...form })
+            if (form.end_time = '') {
+                throw new Error('Необходимо указать время и дату окончания задачи')
+            }
+            await request('/api/tasks/create', 'POST', { ...form })
+            auth.setUpdated(true)
+            resetForm()
+        } catch (e) {
 
+        }
+    }
+    console.log('is supervisor ', auth.supervisor, JSON.stringify(form))
+
+    const deleteTask = async () => {
+        try {
+            await request('/api/tasks/delete', 'POST', { ...form })
+            auth.setUpdated(true)
+            resetForm()
+        } catch (e) {
+
+        }
+
+    }
+
+    const updateTask = async () => {
+        try {
+            if (form.end_time = '') {
+                throw new Error('Необходимо указать время и дату окончания задачи')
+            }
+            await request('/api/tasks/update', 'POST', { ...form })
+            auth.setUpdated(true)
             resetForm()
         } catch (e) {
 
         }
     }
 
+    const changeStatus = async () => {
+        try {
+            
+            await request('/api/tasks/updateStatus', 'POST', { ...form })
+            auth.setUpdated(true)
+            resetForm()
+
+        } catch (e) {
+            
+        }
+    }
+
+    useEffect(() => {
+        if (!checked && active) {
+            setPurpose(form.header == '')
+            setChecked(true)
+        }
+
+    })
     //window.M.FormSelect.init()
 
     return (
@@ -107,10 +189,10 @@ export const TasksModal = ({ active, setActive, purpose }) => {
                             type="select"
                             name="priority"
                             onChange={changeHandler}>
-                            <option value="Низкий" defaultValue>Выберите приоритет задачи</option>
-                            <option value="Низкий">Низкий</option>
-                            <option value="Средний">Средний</option>
-                            <option value="Высокий">Высокий</option>
+                            <option value={form.priority == '' ? '' : form.priority} defaultValue>{form.priority == '' ? 'Выберите приоритет задачи' : form.priority}</option>
+                            <option name="priority" value="Низкий">Низкий</option>
+                            <option name="priority" value="Средний">Средний</option>
+                            <option name="priority" value="Высокий" >Высокий</option>
                         </select>
                         <label htmlFor="priority">Приоритет</label>
                     </div>
@@ -152,10 +234,19 @@ export const TasksModal = ({ active, setActive, purpose }) => {
                         <button
                             className="btn blue darken-4"
                             style={{ marginRight: 10 }}
-                            onClick={createTask}
+                            onClick={updateTask}
                         > Изменить
                         </button>
                     }
+                    {!purpose ?
+                        <button
+                            className="btn cyan darken-4"
+                            style={{ marginRight: 10 }}
+                            onClick={changeStatus}
+                        >
+                        Изменить статус
+                        </button>
+                        : null}
                     <button
                         className="btn grey lighten-1 black-text"
                         style={{ marginRight: 10 }}
@@ -165,7 +256,7 @@ export const TasksModal = ({ active, setActive, purpose }) => {
                     {!purpose ?
                         <button
                             className="btn red lighten-1 black-text right"
-                            onClick={() => { }}
+                            onClick={deleteTask}
                         > Удалить
                         </button>
                         :
