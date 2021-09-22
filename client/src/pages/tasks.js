@@ -31,7 +31,7 @@ export const TasksPage = () => {
             getUpdatedBase() 
             auth.setUpdated(false)
         }
-    }, [getUpdatedBase, auth.updated])
+    }, [getUpdatedBase, auth.updated, auth.setUpdated])
 
     useEffect(() => {
         M.AutoInit();

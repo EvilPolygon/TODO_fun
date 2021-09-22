@@ -21,8 +21,7 @@ export const TasksTable = ({ data }) => {
             priority: '',
             responsible: '',
             end_time: '',
-            u_id: '',
-            isSupervisor: auth.supervisor
+            u_id: ''
         }
     )
 
@@ -35,7 +34,6 @@ export const TasksTable = ({ data }) => {
                 responsible: dataForModal.responsible,
                 end_time: '',
                 u_id: dataForModal.u_id,
-                isSupervisor: auth.supervisor,
                 t_id: dataForModal.t_id
             }
         )

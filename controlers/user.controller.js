@@ -14,6 +14,12 @@ class UserController {
         return found.rows
     }
 
+    async findOneUserById(id) {
+        const found = await db.query('SELECT * FROM users where u_id= $1', [id])
+
+        return found.rows
+    }
+
 }
 
 module.exports = new UserController()

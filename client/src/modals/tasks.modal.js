@@ -33,8 +33,7 @@ export const TasksModal = ({ active, setActive, form, stateForm }) => {
             priority: '',
             responsible: '',
             end_time: '',
-            u_id: auth.userId,
-            isSupervisor: auth.supervisor
+            u_id: auth.userId
         })
         setChecked(false)
         setActive(false)

@@ -110,7 +110,7 @@ router.post(
                     {expiresIn: '6h'}
                 )
                 console.log(JSON.stringify(findUser))
-                res.json({token, userId: findUser[0].u_id, isEmp: findUser[0].supervisor})
+                res.json({token, userId: findUser[0].u_id})
 
             }
             else{

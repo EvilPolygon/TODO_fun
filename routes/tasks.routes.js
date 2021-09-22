@@ -21,16 +21,17 @@ router.post('/create',
                     message: 'Некорректные данные при отправлении задачи'
                 })
             }
-            const { header, description, end_time, priority, responsible, u_id, isSupervisor } = req.body
+            const { header, description, end_time, priority, responsible, u_id } = req.body
 
             const isThisUserExist = await userController.findOneUser(responsible)
+            const reqUser = await userController.findOneUserById(u_id)
 
             if (isThisUserExist.length == 0) {
                 res.status(403).json({ message: 'Пользователя в поле отвественный с таким логином не существует' })
             }
             else {
 
-                if ((!isSupervisor && u_id == isThisUserExist[0].u_id) || (isSupervisor && (!isThisUserExist[0].supervisor || (isThisUserExist[0].u_id == u_id)))) {
+                if ((!reqUser[0].supervisor && u_id == isThisUserExist[0].u_id) || (reqUser[0].supervisor && (!isThisUserExist[0].supervisor || (isThisUserExist[0].u_id == u_id)))) {
                     await tasksController.createTask({ header, description, end_time, priority, responsible, u_id })
                     res.json({ message: JSON.stringify(req.body) })
                 }
