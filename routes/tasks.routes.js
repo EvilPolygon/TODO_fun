@@ -31,6 +31,11 @@ router.post('/create',
             }
             else {
 
+                // здесь если пользователь не руководитель значит может поставить ответственного только себя, а если руководитель то любого не-руководителя или себя
+                
+                // стоило бы вынести в отдельную функцию так как эта конструкция встречается трижды, но тогда придется ее перегрузить так как возвращаемые данные разные
+                // а значит будет еще менее понятно что происходит. пусть лучше повторяется
+
                 if ((!reqUser[0].supervisor && u_id == isThisUserExist[0].u_id) || (reqUser[0].supervisor && (!isThisUserExist[0].supervisor || (isThisUserExist[0].u_id == u_id)))) {
                     await tasksController.createTask({ header, description, end_time, priority, responsible, u_id })
                     res.json({ message: JSON.stringify(req.body) })
@@ -71,13 +76,14 @@ router.post('/delete',
             const { responsible, u_id, isSupervisor, t_id } = req.body
 
             const isThisUserExist = await userController.findOneUser(responsible)
+            const reqUser = await userController.findOneUserById(u_id)
 
             if (isThisUserExist.length == 0) {
                 res.status(403).json({ message: 'Пользователя в поле отвественный с таким логином не существует' })
             }
             else {
 
-                if ((!isSupervisor && u_id == isThisUserExist[0].u_id) || (isSupervisor && (!isThisUserExist[0].supervisor || (isThisUserExist[0].u_id == u_id)))) {
+                if ((!reqUser[0].supervisor && u_id == isThisUserExist[0].u_id) || (reqUser[0].supervisor && (!isThisUserExist[0].supervisor || (isThisUserExist[0].u_id == u_id)))) {
                     await tasksController.deleteTask({ t_id })
                     res.json({ message: 'Задача удалена' })
                 }
@@ -107,13 +113,14 @@ router.post('/update',
             const { header, description, end_time, priority, responsible, u_id, isSupervisor, t_id } = req.body
 
             const isThisUserExist = await userController.findOneUser(responsible)
+            const reqUser = await userController.findOneUserById(u_id)
 
             if (isThisUserExist.length == 0) {
                 res.status(403).json({ message: 'Пользователя в поле отвественный с таким логином не существует' })
             }
             else {
 
-                if ((!isSupervisor && u_id == isThisUserExist[0].u_id) || (isSupervisor && (!isThisUserExist[0].supervisor || (isThisUserExist[0].u_id == u_id)))) {
+                if ((!reqUser[0].supervisor && u_id == isThisUserExist[0].u_id) || (reqUser[0].supervisor && (!isThisUserExist[0].supervisor || (isThisUserExist[0].u_id == u_id)))) {
                     await tasksController.updateTask({ header, description, end_time, priority, responsible, u_id, t_id })
                     res.json({ message: JSON.stringify(req.body) })
                 }

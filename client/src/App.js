@@ -10,7 +10,7 @@ import 'materialize-css'
 
 function App() {
 
-  const { token, login, logout, userId, ready } = useAuth()
+  const { token, login, logout, userId, ready, supervisor } = useAuth()
   const isAuthenticated = !!token
   const routes = useRoutes(isAuthenticated)
 
@@ -22,7 +22,7 @@ function App() {
 
   return (
     <AuthContext.Provider value={{
-      token, login, logout, userId, isAuthenticated, updated, setUpdated
+      token, login, logout, userId, isAuthenticated, updated, setUpdated, supervisor
     }}>    
       <Router>
         {isAuthenticated && <NavBar />}
